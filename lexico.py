@@ -18,22 +18,47 @@ KEYWORDS = {
 
 
 TOKEN_SPEC = (
-    ("NEWLINE", r"\r?\n"),
-    ("COMMENT", r"#.*"),
-    ("SKIP", r"[ \t]+"),
-    ("REL_OP", r"<=|>=|==|!=|<|>"),
-    ("ASSIGN", r"="),
-    ("PLUS", r"\+"),
-    ("MINUS", r"-"),
-    ("STAR", r"\*"),
-    ("SLASH", r"/"),
-    ("LPAREN", r"\("),
-    ("RPAREN", r"\)"),
-    ("COMMA", r","),
-    ("NUMBER", r"\d+"),
-    ("IDENTIFIER", r"[A-Za-z_][A-Za-z0-9_]*"),
-    ("MISMATCH", r"."),
+    ("NUEVA_LINEA", r"\r?\n"),
+    ("COMENTARIO", r"#.*"),
+    ("OMITIR", r"[ \t]+"),
+    ("OPERADOR_REL", r"<=|>=|==|!=|<|>"),
+    ("ASIGNAR", r"="),
+    ("SUMA", r"\+"),
+    ("RESTA", r"-"),
+    ("MULT", r"\*"),
+    ("DIV", r"/"),
+    ("PAREN_IZQ", r"\("),
+    ("PAREN_DER", r"\)"),
+    ("LLAVE_IZQ", r"\{"),
+    ("LLAVE_DER", r"\}"),
+    ("COMA", r","),
+    ("PUNTO_COMA", r";"),
+    ("NUMERO", r"\d+"),
+    ("IDENTIFICADOR", r"[A-Za-z_][A-Za-z0-9_]*"),
+    ("DESCONOCIDO", r"."),
 )
+
+
+TOKEN_TYPE_MAP = {
+    "NUEVA_LINEA": "NEWLINE",
+    "COMENTARIO": "COMMENT",
+    "OMITIR": "SKIP",
+    "OPERADOR_REL": "REL_OP",
+    "ASIGNAR": "ASSIGN",
+    "SUMA": "PLUS",
+    "RESTA": "MINUS",
+    "MULT": "STAR",
+    "DIV": "SLASH",
+    "PAREN_IZQ": "LPAREN",
+    "PAREN_DER": "RPAREN",
+    "LLAVE_IZQ": "LBRACE",
+    "LLAVE_DER": "RBRACE",
+    "COMA": "COMMA",
+    "PUNTO_COMA": "SEMICOLON",
+    "NUMERO": "NUMBER",
+    "IDENTIFICADOR": "IDENTIFIER",
+    "DESCONOCIDO": "MISMATCH",
+}
 
 
 TOKEN_REGEX = re.compile(
@@ -58,7 +83,7 @@ def lex(source: str) -> list[Token]:
     line_start = 0
 
     for match in TOKEN_REGEX.finditer(source):
-        token_type = match.lastgroup
+        token_type = TOKEN_TYPE_MAP.get(match.lastgroup, match.lastgroup)
         value = match.group()
         column = match.start() - line_start + 1
 
